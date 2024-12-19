@@ -93,20 +93,21 @@ where
 #### Задание: 7
 Найдите номера моделей и цены всех имеющихся в продаже продуктов (любого типа) производителя B (латинская буква).
 ```
-SELECT model,price
+SELECT
+	 model,price
 FROM 
-(SELECT model, price 
- FROM PC
- UNION
- SELECT model, price 
- FROM Laptop
- UNION
- SELECT model, price 
- FROM Printer) AS a
+	(SELECT model, price 
+	 FROM PC
+	 UNION
+	 SELECT model, price 
+	 FROM Laptop
+	 UNION
+	 SELECT model, price 
+	 FROM Printer) AS a
 WHERE a.model IN 
-(SELECT model
-FROM product
-where maker='B')
+	(SELECT model
+	FROM product
+	where maker='B')
 ```
 
 #### Задание: 8 
@@ -171,15 +172,15 @@ from ( select
 
 ```
 select
-AVG(speed)
+	AVG(speed)
 FROM(SELECT
-speed
-FROM
-product pr
-INNER JOIN
-pc ON pr.model=pc.model
-WHERE
-maker='A') as tf
+	speed
+	FROM
+	product pr
+	INNER JOIN
+	pc ON pr.model=pc.model
+	WHERE
+	maker='A') as tf
 ```
 
 #### Задание: 15 
@@ -199,22 +200,25 @@ HAVING
 Найдите модели ПК-блокнотов, скорость которых меньше скорости каждого из ПК.
 Вывести: type, model, speed
 ```
-SELECT DISTINCT 'Laptop' AS type, model, speed
-FROM Laptop
-WHERE speed < (SELECT MIN(speed) FROM PC)
+SELECT
+	DISTINCT 'Laptop' AS type, model, speed
+FROM
+	Laptop
+WHERE
+	speed < (SELECT MIN(speed) FROM PC)
 ```
 
 #### Задание: 18 
 Найдите производителей самых дешевых цветных принтеров. Вывести: maker, price
 ```
 SELECT
-product.maker,minzn.min_price
+	product.maker,minzn.min_price
 FROM
-(SELECT
-MIN(pr.price) min_price
-FROM
-printer pr
-WHERE pr.color='y') minzn
+	(SELECT
+	MIN(pr.price) min_price
+	FROM
+	printer pr
+	WHERE pr.color='y') minzn
 JOIN printer pr2 on minzn.min_price=pr2.price and color='y'
 JOIN product ON pr2.model=product.model
 ```
@@ -225,17 +229,17 @@ JOIN product ON pr2.model=product.model
 
 ```
 SELECT
-maker,AVG(screen)
-FROM
-product
-JOIN
-laptop on product.model=laptop.model
-where maker IN (SELECT 
-	DISTINCT maker
+	maker,AVG(screen)
 FROM
 	product
-WHERE
-	type='laptop')
+JOIN
+	laptop on product.model=laptop.model
+where maker IN (SELECT 
+			DISTINCT maker
+		FROM
+			product
+		WHERE
+			type='laptop')
 GROUP BY
 maker
 ```
@@ -252,9 +256,9 @@ FROM
 	product) pr1
 WHERE type='pc'
 GROUP BY
-maker
+	maker
 HAVING
-COUNT(model) >=3
+	COUNT(model) >=3
 ```
 
 #### Задание: 21 
@@ -262,18 +266,18 @@ COUNT(model) >=3
 Вывести: maker, максимальная цена.
 ```
 SELECT
-pr.maker, max(pc2.maxpr) as max_sale
+	pr.maker, max(pc2.maxpr) as max_sale
 FROM
-product pr
+	product pr
 JOIN (
-SELECT 
-	model, MAX(price) as maxpr
-FROM 
-	PC
+	SELECT 
+		model, MAX(price) as maxpr
+	FROM 
+		PC
+	GROUP BY
+		model) PC2 ON pr.model=pc2.model
 GROUP BY
-	model) PC2 ON pr.model=pc2.model
-GROUP BY
-pr.maker
+	pr.maker
 ```
 
 #### Задание: 22 
@@ -301,20 +305,29 @@ FROM
 	product pr
 LEFT JOIN PC ON pr.model=pc.model and pc.speed>=750
 LEFT JOIN laptop lp ON pr.model=lp.model and lp.speed>=750
-WHERE pc.code IS NOT NULL OR lp.code IS NOT NULL
+WHERE
+	pc.code IS NOT NULL OR lp.code IS NOT NULL
 GROUP BY
-pr.maker
+	pr.maker
 HAVING
-count(pc.model) >0 and count(lp.model)>0
+	count(pc.model) >0 and count(lp.model)>0
 
 
-select distinct maker from Product a
+select
+	distinct maker
+from
+	Product a
 JOIN PC b ON a.model =b.model
-where speed > = 750
+where
+	speed > = 750
 intersect
-select distinct maker from Product a
+select
+	 distinct maker
+from
+	Product a
 JOIN Laptop b ON a.model =b.model
-where speed > = 750
+where
+	 speed > = 750
 ```
 
 #### Задание: 25 
@@ -348,15 +361,17 @@ WHERE type='printer' AND maker IN
 ```
 SELECT AVG(a.price)
 FROM
-(SELECT pc1.price
-FROM PC pc1
-WHERE pc1.model IN
-	(SELECT pr1.model
-	FROM product pr1
-	WHERE pr1.maker='A' AND pr1.type='PC')
+	(SELECT pc1.price
+	FROM PC pc1
+	WHERE pc1.model IN
+		(SELECT pr1.model
+		FROM product pr1
+		WHERE pr1.maker='A' AND pr1.type='PC')
 UNION ALL
-SELECT lp.price
-FROM laptop lp
+SELECT
+	lp.price
+FROM
+	laptop lp
 WHERE lp.model IN
 	(SELECT pr2.model
 	FROM product pr2
@@ -366,40 +381,42 @@ WHERE lp.model IN
 #### Задание: 27
 Найдите средний размер диска ПК каждого из тех производителей, которые выпускают и принтеры. Вывести: maker, средний размер HD.
 ```
-SELECT maker, AVG(hd)
+SELECT
+	maker, AVG(hd)
 FROM
-(
-SELECT maker,hd
-FROM
-(
-SELECT maker,model
-	FROM product as pr
-	WHERE maker IN
+	(
+	SELECT maker,hd
+	FROM
 		(
-		SELECT DISTINCT maker
-		FROM product
-		WHERE maker IN (SELECT maker
-		FROM product
-		WHERE type='printer')
-		AND type='PC'
-		)
-) a
-JOIN PC ON a.model=pc.model
-) as a2
+		SELECT maker,model
+			FROM product as pr
+			WHERE maker IN
+				(
+				SELECT DISTINCT maker
+				FROM product
+				WHERE maker IN (SELECT maker
+				FROM product
+				WHERE type='printer')
+				AND type='PC'
+				)
+		) a
+	JOIN PC ON a.model=pc.model
+	) as a2
 GROUP BY maker
 ```
 
 #### Задание: 28
 Используя таблицу Product, определить количество производителей, выпускающих по одной модели.
 ```
-select count(\*)
+select
+	count(\*)
 from
-(
-select maker, count(\*) as countmod
-from product
-group by maker
-having count(\*)=1
-) a
+	(
+	select maker, count(\*) as countmod
+	from product
+	group by maker
+	having count(\*)=1
+	) a
 ```
 
 #### Задание: 29 
@@ -407,18 +424,19 @@ having count(\*)=1
 
 ```
 select 
-CASE
-when a.point is null
-then cast (b.point as int)
-else cast(a.point as int)
-end point,
-CASE
-when a.date is null
-then cast (b.date as datetime)
-else cast(a.date as datetime)
-end date,
-b.inc,a.out
-from outcome_o a
+	CASE
+	when a.point is null
+	then cast (b.point as int)
+	else cast(a.point as int)
+	end point,
+	CASE
+	when a.date is null
+	then cast (b.date as datetime)
+	else cast(a.date as datetime)
+	end date,
+	b.inc,a.out
+from
+	outcome_o a
 full join income_o b on a.date=b.date and a.point=b.point
 ```
 
@@ -427,22 +445,24 @@ full join income_o b on a.date=b.date and a.point=b.point
 Вывод: point, date, суммарный расход пункта за день (out), суммарный приход пункта за день (inc). Отсутствующие значения считать неопределенными (NULL).
 
 ```
-SELECT point_, date_,SUM(out),SUM(inc)
+SELECT
+	point_, date_,SUM(out),SUM(inc)
 FROM
-(select i.point,
-case
-when i.point is NULL
-then cast(o.point as int)
-else cast(i.point as int)
-end point_,
-case
-when i.date is NULL
-then cast(o.date as datetime)
-else cast(i.date as datetime)
-end date_,
-i.inc,o.out
-from (select point,date,sum(inc) as inc from income group by point,date) as i
-full join (select point,date,sum(out) as out from outcome group by point,date) as o on i.date=o.date and i.point=o.point
-) as tabl
-group by point_,date_
+	(select i.point,
+	case
+	when i.point is NULL
+	then cast(o.point as int)
+	else cast(i.point as int)
+	end point_,
+	case
+	when i.date is NULL
+	then cast(o.date as datetime)
+	else cast(i.date as datetime)
+	end date_,
+	i.inc,o.out
+	from (select point,date,sum(inc) as inc from income group by point,date) as i
+	full join (select point,date,sum(out) as out from outcome group by point,date) as o on i.date=o.date and i.point=o.point
+	) as tabl
+group by
+	 point_,date_
 ```
