@@ -425,14 +425,14 @@ from
 ```
 select 
 	CASE
-	when a.point is null
-	then cast (b.point as int)
-	else cast(a.point as int)
+		when a.point is null
+		then cast (b.point as int)
+		else cast(a.point as int)
 	end point,
 	CASE
-	when a.date is null
-	then cast (b.date as datetime)
-	else cast(a.date as datetime)
+		when a.date is null
+		then cast (b.date as datetime)
+		else cast(a.date as datetime)
 	end date,
 	b.inc,a.out
 from
@@ -450,14 +450,14 @@ SELECT
 FROM
 	(select i.point,
 	case
-	when i.point is NULL
-	then cast(o.point as int)
-	else cast(i.point as int)
+		when i.point is NULL
+		then cast(o.point as int)
+		else cast(i.point as int)
 	end point_,
 	case
-	when i.date is NULL
-	then cast(o.date as datetime)
-	else cast(i.date as datetime)
+		when i.date is NULL
+		then cast(o.date as datetime)
+		else cast(i.date as datetime)
 	end date_,
 	i.inc,o.out
 	from (select point,date,sum(inc) as inc from income group by point,date) as i
